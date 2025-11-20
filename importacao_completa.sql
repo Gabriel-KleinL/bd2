@@ -450,7 +450,7 @@ DELIMITER //
 CREATE PROCEDURE sp_ExportarSimulacaoParaAvaliador(
     IN p_NumSimulacao INT
 )
-BEGIN
+proc_label: BEGIN
     DECLARE v_QtdCorposFinais INT DEFAULT 0;
     DECLARE v_UltimaIteracao INT;
     DECLARE v_DataSimulacao VARCHAR(50);
@@ -501,7 +501,7 @@ BEGIN
             StatusExportacao = 'PENDENTE',
             DataUltimaTentativa = NOW();
         SELECT CONCAT('Simulação ', p_NumSimulacao, ' ainda não possui resultados. Marcada como PENDENTE.') AS Resultado;
-        LEAVE sp_ExportarSimulacaoParaAvaliador;
+        LEAVE proc_label;
     END IF;
 
     SELECT COUNT(*)
@@ -531,7 +531,7 @@ BEGIN
             QtdCorposFinais = v_QtdCorposFinais,
             MensagemErro = 'Simulação não exportada: menos de 3 corpos finais';
         SELECT CONCAT('Simulação ', p_NumSimulacao, ' não exportada: apenas ', v_QtdCorposFinais, ' corpos finais (mínimo: 3)') AS Resultado;
-        LEAVE sp_ExportarSimulacaoParaAvaliador;
+        LEAVE proc_label;
     END IF;
 
     SELECT StatusExportacao, NumTentativas
@@ -541,7 +541,7 @@ BEGIN
 
     IF v_StatusAtual = 'SUCESSO' THEN
         SELECT CONCAT('Simulação ', p_NumSimulacao, ' já foi exportada com sucesso anteriormente.') AS Resultado;
-        LEAVE sp_ExportarSimulacaoParaAvaliador;
+        LEAVE proc_label;
     END IF;
 
     START TRANSACTION;

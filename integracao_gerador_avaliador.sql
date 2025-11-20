@@ -59,7 +59,7 @@ DELIMITER //
 CREATE PROCEDURE sp_ExportarSimulacaoParaAvaliador(
     IN p_NumSimulacao INT
 )
-BEGIN
+proc_label: BEGIN
     -- Declaração de variáveis
     DECLARE v_QtdCorposFinais INT DEFAULT 0;
     DECLARE v_UltimaIteracao INT;
@@ -122,7 +122,7 @@ BEGIN
             DataUltimaTentativa = NOW();
 
         SELECT CONCAT('Simulação ', p_NumSimulacao, ' ainda não possui resultados. Marcada como PENDENTE.') AS Resultado;
-        LEAVE sp_ExportarSimulacaoParaAvaliador;
+        LEAVE proc_label;
     END IF;
 
     -- Contar quantos corpos restaram na última iteração
@@ -156,7 +156,7 @@ BEGIN
             MensagemErro = 'Simulação não exportada: menos de 3 corpos finais';
 
         SELECT CONCAT('Simulação ', p_NumSimulacao, ' não exportada: apenas ', v_QtdCorposFinais, ' corpos finais (mínimo: 3)') AS Resultado;
-        LEAVE sp_ExportarSimulacaoParaAvaliador;
+        LEAVE proc_label;
     END IF;
 
     -- Verificar status atual da exportação
@@ -168,7 +168,7 @@ BEGIN
     -- Se já foi exportada com sucesso, não exportar novamente
     IF v_StatusAtual = 'SUCESSO' THEN
         SELECT CONCAT('Simulação ', p_NumSimulacao, ' já foi exportada com sucesso anteriormente.') AS Resultado;
-        LEAVE sp_ExportarSimulacaoParaAvaliador;
+        LEAVE proc_label;
     END IF;
 
     -- Iniciar transação para garantir atomicidade

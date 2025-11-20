@@ -184,7 +184,7 @@ USE SimulacaoCorpos;
 DROP PROCEDURE IF EXISTS sp_ExportarSimulacaoParaAvaliador;
 
 CREATE PROCEDURE sp_ExportarSimulacaoParaAvaliador(IN p_NumSimulacao INT)
-BEGIN
+proc_label: BEGIN
     DECLARE v_QtdCorposFinais INT;
     DECLARE v_MaxIteracao INT;
     DECLARE v_QtdCorposIniciais INT;
@@ -212,7 +212,7 @@ BEGIN
             NumTentativas = NumTentativas + 1,
             MensagemErro = 'Nenhuma iteração encontrada'
         WHERE NumSimulacao = p_NumSimulacao;
-        LEAVE sp_ExportarSimulacaoParaAvaliador;
+        LEAVE proc_label;
     END IF;
 
     SELECT COUNT(*) INTO v_QtdCorposFinais
@@ -230,7 +230,7 @@ BEGIN
             NumTentativas = NumTentativas + 1,
             MensagemErro = 'Menos de 3 corpos finais'
         WHERE NumSimulacao = p_NumSimulacao;
-        LEAVE sp_ExportarSimulacaoParaAvaliador;
+        LEAVE proc_label;
     END IF;
 
     SELECT QtdCorposInicial, NumInteracoes, TempoInteracoes
